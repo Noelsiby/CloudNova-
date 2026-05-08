@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
             gap: 1rem;
             margin-top: 1.5rem;
         }
+
         .event-feature {
             background-color: var(--accent-bg);
             padding: 1rem;
             border-radius: 8px;
             font-size: 1rem;
         }
+
         .event-feature strong {
             display: block;
             color: var(--primary-color);
@@ -27,6 +30,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="logo">Nova Events 2026</div>
@@ -59,9 +63,10 @@
 
             if (result.success && result.data.length > 0) {
                 // Find event_id = 1 or default to first
-                const targetEventId = 1;
-                const event = result.data.find(e => e.id === targetEventId) || result.data[0];
+                const params = new URLSearchParams(window.location.search);
+                const targetEventId = parseInt(params.get('id'));
 
+                const event = result.data.find(e => e.id === targetEventId);
                 container.innerHTML = `
                     <h2 class="card-title" style="font-size: 2rem; margin-bottom: 0.5rem;">${event.title || 'Event Name'}</h2>
                     <p style="text-align: center; color: #6B7280; font-size: 1.1rem; margin-bottom: 2rem;">${event.description || 'Event Description'}</p>
@@ -119,4 +124,5 @@
         });
     </script>
 </body>
+
 </html>
