@@ -23,6 +23,8 @@ def get_events():
 # ===============================
 # ADMIN: CREATE EVENT
 # ===============================
+
+
 @event_bp.route("/admin/create-event", methods=["POST"])
 def create_event():
     data = request.json
@@ -32,34 +34,39 @@ def create_event():
         date = data["date"]
         location = data.get("location", "")
         total_seats = int(data["total_seats"])
-        
+
         conn = get_connection()
         cursor = conn.cursor()
-        
+
         query = """
-            INSERT INTO events (title, description, date, location, total_seats, available_seats)
+            INSERT INTO events (title, description, event_date, location, total_seats, available_seats)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, description, date, location, total_seats, total_seats))
+        cursor.execute(query, (title, description, date,
+                       location, total_seats, total_seats))
         conn.commit()
-        
+
         return jsonify({
             "message": "Event created successfully"
         })
     except Exception as e:
         return jsonify({"message": "Event creation failed", "error": str(e)}), 500
     finally:
-        if 'cursor' in locals(): cursor.close()
-        if 'conn' in locals(): conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 # ===============================
 # ADMIN: EVENT STATS
 # ===============================
+
+
 @event_bp.route("/admin/event-stats", methods=["GET"])
 def get_event_stats():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
+
     try:
         # Sums all events
         query = """
@@ -71,7 +78,7 @@ def get_event_stats():
         """
         cursor.execute(query)
         stats = cursor.fetchone()
-        
+
         # Ensures returned values are integers safely
         return jsonify({
             "total_seats": int(stats["total_seats"]),
