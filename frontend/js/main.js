@@ -1,5 +1,5 @@
 // Global Configuration
-const API_BASE_URL = 'http://13.201.28.55:5000';
+const API_BASE_URL = 'http://3.6.39.67:5000';
 
 /**
  * Perform a generic fetch wrapper to easily extract JSON and handle errors.
