@@ -18,7 +18,8 @@ def register():
     password = data["password"]
 
     # Hash the password
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    hashed_pw = bcrypt.hashpw(password.encode(
+        'utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -38,6 +39,7 @@ def register():
         })
 
     except Exception as e:
+        print(e)
         return jsonify({
             "message": "Registration failed",
             "error": str(e)
@@ -78,10 +80,11 @@ def login():
     if user:
         db_password = user["db_password"]
         is_valid = False
-        
+
         # Check compatibility with plaintext passwords vs bcrypt
         if db_password.startswith("$2") and len(db_password) == 60:
-            is_valid = bcrypt.checkpw(password.encode('utf-8'), db_password.encode('utf-8'))
+            is_valid = bcrypt.checkpw(password.encode(
+                'utf-8'), db_password.encode('utf-8'))
         else:
             is_valid = (password == db_password)
 
@@ -101,17 +104,20 @@ def login():
 # ===============================
 # GET USER BY ID
 # ===============================
+
+
 @auth_bp.route("/user/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    cursor.execute("SELECT id, name, email, role FROM users WHERE id=%s", (user_id,))
+
+    cursor.execute(
+        "SELECT id, name, email, role FROM users WHERE id=%s", (user_id,))
     user = cursor.fetchone()
-    
+
     cursor.close()
     conn.close()
-    
+
     if user:
         return jsonify(user)
     return jsonify({"message": "User not found"}), 404
