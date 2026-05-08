@@ -50,6 +50,7 @@ def create_event():
             "message": "Event created successfully"
         })
     except Exception as e:
+        print(e)
         return jsonify({"message": "Event creation failed", "error": str(e)}), 500
     finally:
         if 'cursor' in locals():
