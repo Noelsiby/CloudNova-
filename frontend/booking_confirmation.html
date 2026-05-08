@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - Nova Events 2026</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .ticket-box {
+            border: 2px dashed #E5E7EB;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background-color: #F9FAFB;
+        }
+        .ticket-id {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+        .success-icon {
+            color: var(--success-color);
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered-container">
+        <div class="card" style="text-align: center;">
+            <span class="success-icon">✓</span>
+            <h2 class="card-title" style="color: var(--success-color); margin-bottom: 0.5rem;">Booking Successful!</h2>
+            <p>Your seat has been reserved.</p>
+            
+            <div class="ticket-box">
+                <p style="text-transform: uppercase; font-size: 0.875rem; color: #6B7280; font-weight: 600;">Your Ticket ID</p>
+                <div id="display-ticket-id" class="ticket-id">----</div>
+                <img id="qr-code-img" src="" alt="Ticket QR Code" style="display: none; margin: 1rem auto; max-width: 150px; border-radius: 8px;">
+            </div>
+
+            <div style="text-align: left; background: var(--accent-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="margin-bottom: 0.5rem;"><strong>Event:</strong> <span id="display-title"></span></p>
+                <p style="margin-bottom: 0.5rem;"><strong>Date:</strong> <span id="display-date"></span></p>
+                <p style="margin-bottom: 0;"><strong>Location:</strong> <span id="display-location"></span></p>
+            </div>
+
+            <button onclick="window.location.href='home.html'" class="btn btn-secondary">Return to Home</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            requireAuth();
+
+            const ticketId = localStorage.getItem('ticket_id');
+            const qrCode = localStorage.getItem('qr_code');
+            const title = localStorage.getItem('event_title');
+            const date = localStorage.getItem('event_date');
+            const location = localStorage.getItem('event_location');
+
+            if (!ticketId) {
+                window.location.href = 'event_details.html';
+                return;
+            }
+
+            document.getElementById('display-ticket-id').textContent = ticketId;
+            
+            if (qrCode) {
+                const qrImg = document.getElementById('qr-code-img');
+                // The API endpoint is 127.0.0.1:5000 so the path is relative. 
+                // We should construct an absolute URL using the API_BASE_URL.
+                qrImg.src = API_BASE_URL + qrCode;
+                qrImg.style.display = 'block';
+            }
+
+            document.getElementById('display-title').textContent = title || 'Nova Events Summit';
+            document.getElementById('display-date').textContent = date || 'TBD';
+            document.getElementById('display-location').textContent = location || 'TBD';
+        });
+    </script>
+</body>
+</html>

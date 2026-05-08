@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - Nova Events 2026</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .event-info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .event-feature {
+            background-color: var(--accent-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .event-feature strong {
+            display: block;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered-container" style="align-items: flex-start; padding-top: 2rem;">
+        <div class="card event-details-card" id="event-display">
+            <!-- Populated via JS -->
+            <p style="text-align: center;">Loading event details...</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Ensure user is logged in
+            requireAuth();
+
+            const container = document.getElementById('event-display');
+            const result = await fetchAPI('/events');
+
+            if (result.success && result.data.length > 0) {
+                // Find event_id = 1 or default to first
+                const targetEventId = 1;
+                const event = result.data.find(e => e.id === targetEventId) || result.data[0];
+
+                container.innerHTML = `
+                    <h2 class="card-title" style="font-size: 2rem; margin-bottom: 0.5rem;">${event.title || 'Event Name'}</h2>
+                    <p style="text-align: center; color: #6B7280; font-size: 1.1rem; margin-bottom: 2rem;">${event.description || 'Event Description'}</p>
+                    
+                    <div id="booking-alert"></div>
+
+                    <div class="event-info-container">
+                        <div class="event-feature">
+                            <strong>Date</strong>
+                            ${formatDate(event.date)}
+                        </div>
+                        <div class="event-feature">
+                            <strong>Location</strong>
+                            ${event.location || 'TBD'}
+                        </div>
+                        <div class="event-feature">
+                            <strong>Available Seats</strong>
+                            <span class="status-badge" style="font-size: 1rem;">${event.available_seats !== undefined ? event.available_seats : 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <button id="book-btn" class="btn" style="margin-top: 2rem;">Book Seat</button>
+                `;
+
+                localStorage.setItem('event_title', event.title || '');
+                localStorage.setItem('event_date', event.date || '');
+                localStorage.setItem('event_location', event.location || '');
+
+                document.getElementById('book-btn').addEventListener('click', async () => {
+                    const userId = localStorage.getItem('user_id');
+                    const btn = document.getElementById('book-btn');
+                    btn.disabled = true;
+                    btn.textContent = 'Processing...';
+
+                    const bookResult = await fetchAPI('/book', {
+                        method: 'POST',
+                        body: JSON.stringify({ user_id: userId, event_id: targetEventId })
+                    });
+
+                    if (bookResult.success && bookResult.data.ticket_id) {
+                        localStorage.setItem('ticket_id', bookResult.data.ticket_id);
+                        if (bookResult.data.qr_code) {
+                            localStorage.setItem('qr_code', bookResult.data.qr_code);
+                        }
+                        window.location.href = 'booking_confirmation.html';
+                    } else {
+                        showAlert('booking-alert', bookResult.error || 'Failed to book seat.', 'error');
+                        btn.disabled = false;
+                        btn.textContent = 'Book Seat';
+                    }
+                });
+            } else {
+                container.innerHTML = '<p>Event information is currently unavailable.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

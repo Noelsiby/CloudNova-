@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nova Events 2026</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="login.html" style="color: var(--secondary-color);">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered-container">
+        <div class="card">
+            <h2 class="card-title">Welcome Back</h2>
+            <div id="login-alert"></div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem;">
+                Don't have an account? <a href="register.html" style="color: var(--primary-color); font-weight: 600;">Register here</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const result = await fetchAPI('/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            if (result.success && result.data.user_id) {
+                showAlert('login-alert', 'Login successful! Redirecting...', 'success');
+                
+                // Store session info
+                localStorage.setItem('user_id', result.data.user_id);
+                localStorage.setItem('role', result.data.role || 'user');
+                localStorage.setItem('user_name', result.data.name);
+
+                setTimeout(() => {
+                    if (result.data.role === 'admin') {
+                        window.location.href = 'admin_dashboard.html';
+                    } else {
+                        window.location.href = 'event_details.html';
+                    }
+                }, 1000);
+            } else {
+                showAlert('login-alert', result.error, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

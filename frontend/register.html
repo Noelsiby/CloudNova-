@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Nova Events 2026</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="register.html" style="color: var(--secondary-color);">Register</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered-container">
+        <div class="card">
+            <h2 class="card-title">Create an Account</h2>
+            <div id="register-alert"></div>
+            
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem;">
+                Already have an account? <a href="login.html" style="color: var(--primary-color); font-weight: 600;">Log in here</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const result = await fetchAPI('/register', {
+                method: 'POST',
+                body: JSON.stringify({ name, email, password })
+            });
+
+            if (result.success) {
+                showAlert('register-alert', 'Registration successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            } else {
+                showAlert('register-alert', result.error, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

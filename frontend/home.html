@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Events 2026 - Cloud & Technology Summit</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Cloud & Technology Summit</h1>
+            <p>Join industry leaders for an exclusive deep dive into the future of cloud computing, AI integrations, and cutting-edge operational technology.</p>
+            <div class="hero-actions">
+                <a href="register.html" class="btn btn-secondary">Register Now</a>
+                <a href="login.html" class="btn">Login</a>
+            </div>
+        </section>
+
+        <!-- Events Container -->
+        <section class="centered-container" style="min-height: auto; margin-top: 2rem;">
+            <div id="events-container" style="display: flex; flex-direction: column; gap: 2rem; width: 100%; align-items: center;">
+                <!-- Events will be populated here -->
+                <p>Loading events...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('events-container');
+            const result = await fetchAPI('/events');
+
+            if (result.success && result.data.length > 0) {
+                container.innerHTML = '';
+                // Since this is home, we just display summary cards
+                result.data.forEach(event => {
+                    const card = document.createElement('div');
+                    card.className = 'card event-details-card';
+                    card.innerHTML = `
+                        <h2 class="card-title">${event.title || 'Event Name'}</h2>
+                        <p>${event.description || 'Join us for a wonderful event.'}</p>
+                        <div style="margin-top: 1.5rem; display: grid; gap: 0.5rem;">
+                            <p><strong>Date:</strong> ${formatDate(event.date)}</p>
+                            <p><strong>Location:</strong> ${event.location || 'TBD'}</p>
+                            <p><strong>Available Seats:</strong> <span class="status-badge">${event.available_seats !== undefined ? event.available_seats : 'N/A'}</span></p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<p>No upcoming events found.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

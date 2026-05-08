@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Nova Events 2026</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Nova Events 2026</div>
+        <nav>
+            <ul id="nav-auth">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="event_details.html">Event Details</a></li>
+                <li><a href="my_bookings.html" style="color: var(--secondary-color);">My Bookings</a></li>
+                <li><a href="#" id="logout-btn" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>My Bookings</h2>
+            <button class="btn btn-secondary" style="width: auto; padding: 0.5rem 1rem; margin: 0;" onclick="loadMyBookings()">Refresh</button>
+        </div>
+        
+        <p>Your complete history of registered events and tickets.</p>
+        <div id="my-bookings-alert"></div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event Title</th>
+                        <th>Ticket ID</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="my-bookings-table-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Loading bookings...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>Nova Events 2026 &copy; Cloud & Technology Summit</p>
+    </footer>
+
+    <script src="js/main.js?v=3"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            requireAuth('user');
+            loadMyBookings();
+        });
+
+        async function loadMyBookings() {
+            const tbody = document.getElementById('my-bookings-table-body');
+            const userId = localStorage.getItem('user_id');
+            
+            const result = await fetchAPI(`/my-bookings/${userId}`);
+            
+            if (result.success) {
+                tbody.innerHTML = '';
+                
+                if (!result.data || result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">You have no bookings yet.</td></tr>';
+                    return;
+                }
+
+                result.data.forEach(b => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${b.event_title || b.title || 'N/A'}</strong></td>
+                        <td>${b.ticket_id || b.id || 'N/A'}</td>
+                        <td>${formatDate(b.booking_date || b.created_at)}</td>
+                        <td><span class="status-badge" style="background-color: ${b.status === 'Cancelled' ? '#FEE2E2' : '#DCFCE7'}; color: ${b.status === 'Cancelled' ? '#991B1B' : '#166534'};">${b.status || 'Confirmed'}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                showAlert('my-bookings-alert', result.error, 'error');
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--error-color);">Failed to load bookings.</td></tr>';
+            }
+        }
+    </script>
+</body>
+</html>
