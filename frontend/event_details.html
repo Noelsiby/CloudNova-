@@ -66,6 +66,8 @@
                 const params = new URLSearchParams(window.location.search);
                 const targetEventId = parseInt(params.get('id'));
 
+                const event = result.data.find(e => e.id === targetEventId);
+
                 if (!event) {
                     container.innerHTML = '<p>No event selected.</p>';
                     return;
