@@ -1,5 +1,5 @@
 // Global Configuration
-const API_BASE_URL = 'http://127.0.0.1:5000';
+const API_BASE_URL = 'http://13.201.28.55:5000';
 
 /**
  * Perform a generic fetch wrapper to easily extract JSON and handle errors.
@@ -15,7 +15,7 @@ async function fetchAPI(endpoint, options = {}) {
         });
 
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || data.error || 'API Request Failed');
         }
@@ -33,10 +33,10 @@ async function fetchAPI(endpoint, options = {}) {
 function showAlert(containerId, message, type = 'error') {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
     container.textContent = message;
     container.className = `alert ${type}`;
-    
+
     // Auto clear after 5s
     setTimeout(() => {
         container.className = 'alert';
@@ -88,12 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const userId = localStorage.getItem('user_id');
     const role = localStorage.getItem('role');
     let userName = localStorage.getItem('user_name');
-    
+
     const navAuth = document.getElementById('nav-auth');
     if (navAuth && userId) {
         const updateNav = (name) => {
             const profileHTML = `<li style="display: flex; align-items: center; gap: 0.5rem; color: var(--primary-color); font-weight: 600; margin-right: 1rem;"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> ${name}</li>`;
-            
+
             if (role === 'admin') {
                 navAuth.innerHTML = `
                     ${profileHTML}
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <li><a href="#" id="logout-btn">Logout</a></li>
                 `;
             }
-            
+
             document.getElementById('logout-btn')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 logout();
@@ -140,10 +140,10 @@ function formatDate(dateString) {
     if (!dateString) return 'TBD';
     const d = new Date(dateString);
     if (isNaN(d.getTime())) return dateString;
-    return d.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+    return d.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
     });
 }
