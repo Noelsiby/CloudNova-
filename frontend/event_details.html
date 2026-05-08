@@ -76,7 +76,7 @@
                     <div class="event-info-container">
                         <div class="event-feature">
                             <strong>Date</strong>
-                            ${formatDate(event.date)}
+                            ${formatDate(event.event_date || event.date)}
                         </div>
                         <div class="event-feature">
                             <strong>Location</strong>
@@ -92,7 +92,7 @@
                 `;
 
                 localStorage.setItem('event_title', event.title || '');
-                localStorage.setItem('event_date', event.date || '');
+                localStorage.setItem('event_date', event.event_date || event.date || '');
                 localStorage.setItem('event_location', event.location || '');
 
                 document.getElementById('book-btn').addEventListener('click', async () => {
