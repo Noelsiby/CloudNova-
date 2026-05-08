@@ -87,6 +87,7 @@ def get_event_stats():
             "remaining_seats": int(stats["remaining_seats"])
         })
     except Exception as e:
+        print(e)
         return jsonify({"message": "Stats fetch failed", "error": str(e)}), 500
     finally:
         cursor.close()
